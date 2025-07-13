@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sivaji Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: white; }
+
+    /* Animations */
+    @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 30px #0ea5e9;
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 50px #0ea5e9;
+      }
+    }
+    @keyframes rotateBorder { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .navbar {
+      display: flex; justify-content: space-between; align-items: center; padding: 20px 50px;
+      background-color: #0f172a; position: sticky; top: 0; z-index: 1000;
+      transform: translateX(-100%); animation: slideIn 0.8s forwards 0.1s;
+    }
+    .logo { font-size: 24px; font-weight: bold; }
+    .logo span { color: #38bdf8; }
+    .nav-links { display: flex; gap: 25px; list-style: none; }
+    .nav-links a { color: white; text-decoration: none; font-weight: 500; }
+    .nav-links a:hover { color: #38bdf8; }
+
+    .main-content {
+      display: flex; align-items: center; padding: 60px 5% 60px 0; min-height: 90vh;
+    }
+
+    .img-container {
+      flex: 0 0 30%; padding-left: 5%; transform: translateX(-100%);
+      animation: slideIn 0.8s forwards 0.5s;
+    }
+
+    .img-glow {
+      width: 260px; height: 260px; border-radius: 50%; position: relative;
+      display: flex; justify-content: center; align-items: center;
+      animation: pulse 4s infinite, bounce 3s ease-in-out infinite;
+      background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+    }
+    .img-glow::after {
+      content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+      background: linear-gradient(45deg, #0ea5e9, #38bdf8, #1d4ed8); border-radius: 50%;
+      z-index: -1; animation: rotateBorder 8s linear infinite;
+    }
+    .img-glow img {
+      width: 200px; height: 200px; border-radius: 50%; object-fit: cover;
+      border: 4px solid #0f172a;
+      transition: transform 0.5s ease;
+    }
+    .img-glow:hover img {
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    .right {
+      flex: 0 0 70%; transform: translateX(-100%); animation: slideIn 0.8s forwards 0.2s;
+    }
+    .right h1 { font-size: 36px; margin: 10px 0; }
+    .right h3 span { color: #38bdf8; font-weight: bold; }
+    .right p { margin: 15px 0 20px; line-height: 1.6; }
+
+    .button-row {
+      display: flex; gap: 15px; margin: 20px 0;
+      flex-wrap: wrap; justify-content: flex-start;
+    }
+    .btn {
+      padding: 10px 18px; border-radius: 6px; font-weight: bold; color: white;
+      display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .btn-instagram { background-color: #E1306C; }
+    .btn-linkedin { background-color: #0A66C2; }
+    .btn-email { background-color: #f97316; }
+    .btn-call { background-color: #10b981; }
+    .btn-resume { background-color: #2563eb; }
+    .btn-cert { background-color: #7c3aed; }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #1e293b;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-btn:hover {
+      color: #38bdf8;
+    }
+
+    .modal h2 {
+      color: #38bdf8;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .modal p {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .project-item {
+      margin-bottom: 25px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #334155;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .project-item:hover {
+      background-color: #3c4b66;
+      transform: translateX(5px);
+    }
+
+    .project-item h3 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .project-details {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #475569;
+    }
+
+    .components-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+
+    .components-list li {
+      margin-bottom: 5px;
+      position: relative;
+    }
+
+    .components-list li:before {
+      content: "▹";
+      position: absolute;
+      left: -20px;
+      color: #38bdf8;
+    }
+
+    /* Updated Skills Section */
+    .skills-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .skill-category {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #475569;
+    }
+
+    .skill-category:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .skills-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .skill-item {
+      background-color: #334155;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      width: fit-content;
+    }
+
+    /* Certificate Selection Popup */
+    .certificate-popup {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .certificate-option {
+      padding: 15px;
+      background-color: #334155;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .certificate-option:hover {
+      background-color: #3c4b66;
+      transform: translateX(5px);
+    }
+
+    .certificate-option i {
+      font-size: 20px;
+      color: #38bdf8;
+    }
+
+    /* Certificate Display */
+    .certificate-display {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .certificate-display.active {
+      display: block;
+    }
+
+    .certificate-image {
+      width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-top: 15px;
+      border: 2px solid #475569;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 8px 15px;
+      background-color: #475569;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #38bdf8;
+    }
+
+    @media (max-width: 768px) {
+      .main-content { flex-direction: column; padding: 60px 5%; }
+      .img-container, .right { transform: none; animation: none; padding: 0; }
+      .button-row { justify-content: center; }
+      .img-glow { width: 220px; height: 220px; }
+      .img-glow img { width: 180px; height: 180px; }
+    }
+
+    @media (max-width: 480px) {
+      .navbar { padding: 15px 20px; }
+      .nav-links { gap: 15px; }
+      .right h1 { font-size: 28px; }
+      .button-row { gap: 10px; }
+      .btn { padding: 8px 12px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">Port<span>folio</span></div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="openModal('about')">About</a></li>
+      <li><a href="#" onclick="openModal('projects')">Projects</a></li>
+      <li><a href="#" onclick="openModal('skills')">Skills</a></li>
+    </ul>
+  </div>
+
+  <section class="main-content">
+    <div class="img-container">
+      <div class="img-glow">
+        <img src="sivaji.jpg" alt="Sivaji">
+      </div>
+    </div>
+    <div class="right">
+      <h2>Hello, I'm</h2>
+      <h1>Samantula Sivaji</h1>
+      <h3>And I'm an <span id="typewriter"></span></h3>
+      <p>
+        I'm passionate about building real-time IoT projects using sensors, embedded systems, and intuitive web dashboards.
+      </p>
+
+      <div class="button-row">
+        <a href="https://www.instagram.com/sivv_01" class="btn btn-instagram" target="_blank">
+          <i class="fab fa-instagram"></i> Instagram
+        </a>
+        <a href="https://www.linkedin.com/in/samantula-sivaji-0435742b2" class="btn btn-linkedin" target="_blank">
+          <i class="fab fa-linkedin"></i> LinkedIn
+        </a>
+        <a href="mailto:samantulasivaji3@gmail.com" class="btn btn-email">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+        <a href="tel:+919692168134" class="btn btn-call">
+          <i class="fas fa-phone"></i> Call
+        </a>
+        <a href="resume.pdf" class="btn btn-resume">
+          <i class="fas fa-download"></i> Resume
+        </a>
+        <a href="#" class="btn btn-cert" onclick="openModal('certificates')">
+          <i class="fas fa-certificate"></i> Certificates
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('about')">&times;</span>
+      <h2>About Me</h2>
+      <p>IoT developer passionate about embedded systems and sensor integration. Creating innovative hardware-software solutions.</p>
+    </div>
+  </div>
+
+  <!-- Projects Modal -->
+  <div id="projectsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('projects')">&times;</span>
+      <h2>My Projects</h2>
+
+      <div class="project-item" onclick="toggleProjectDetails('bus')">
+        <h3>1. Bus Tracking System</h3>
+        <div id="bus" class="project-details">
+          <p>Real-time tracking system showing bus location, seat availability, and passenger wait times.</p>
+          <strong>Components Used:</strong>
+          <ul class="components-list">
+            <li>GPS Module</li>
+            <li>NodeMCU</li>
+            <li>Ultrasonic sensors</li>
+            <li>IR sensors</li>
+            <li>LCD display</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="project-item" onclick="toggleProjectDetails('weather')">
+        <h3>2. Weather Monitoring Station</h3>
+        <div id="weather" class="project-details">
+          <p>System that monitors and displays various environmental parameters.</p>
+          <strong>Components Used:</strong>
+          <ul class="components-list">
+            <li>DHT11 sensor</li>
+            <li>Light sensing sensor</li>
+            <li>NodeMCU</li>
+            <li>LCD display</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="project-item" onclick="toggleProjectDetails('footstep')">
+        <h3>3. Footstep Power Generation</h3>
+        <div id="footstep" class="project-details">
+          <p>Energy harvesting system converting footstep pressure into electrical energy.</p>
+          <strong>Components Used:</strong>
+          <ul class="components-list">
+            <li>Piezoelectric sensors</li>
+            <li>NodeMCU</li>
+            <li>Voltage regulator</li>
+            <li>Supercapacitors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills Modal -->
+  <div id="skillsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('skills')">&times;</span>
+      <h2>My Skills</h2>
+
+      <div class="skills-section">
+        <div class="skill-category">
+          <h3>Hardware & Embedded Systems</h3>
+          <div class="skills-container">
+            <div class="skill-item">Arduino</div>
+            <div class="skill-item">Circuit Design</div>
+            <div class="skill-item">NodeMCU</div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Programming Languages</h3>
+          <div class="skills-container">
+            <div class="skill-item">C</div>
+            <div class="skill-item">Python</div>
+            <div class="skill-item">HTML/CSS</div>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Softwares</h3>
+          <div class="skills-container">
+            <div class="skill-item">PowerPoint</div>
+            <div class="skill-item">MS Word</div>
+            <div class="skill-item">Arduino IDE</div>
+            <div class="skill-item">Proteus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Certificates Modal -->
+  <div id="certificatesModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('certificates')">&times;</span>
+      <h2>My Certificates</h2>
+
+      <div id="certificateSelection" class="certificate-popup">
+        <div class="certificate-option" onclick="showCertificate('web')">
+          <span>Web Development Certificate</span>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="certificate-option" onclick="showCertificate('embedded')">
+          <span>Embedded System Certificate</span>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+
+      <div id="webCertificate" class="certificate-display">
+        <h3>Web Development Certificate</h3>
+        <img src="internpe.jpg" alt="Web Development Certificate" class="certificate-image">
+        <div class="back-button" onclick="backToSelection()">
+          <i class="fas fa-arrow-left"></i> Back to Certificates
+        </div>
+      </div>
+
+      <div id="embeddedCertificate" class="certificate-display">
+        <h3>Embedded System Certificate</h3>
+        <img src="robocoupler.jpg" alt="Embedded System Certificate" class="certificate-image">
+        <div class="back-button" onclick="backToSelection()">
+          <i class="fas fa-arrow-left"></i> Back to Certificates
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Typewriter effect
+    const types = ["IoT Developer", "Embedded Engineer", "Web Designer"];
+    let i = 0, j = 0, isDeleting = false;
+    function typeWriter() {
+      const current = types[i];
+      document.getElementById("typewriter").textContent =
+        isDeleting ? current.substring(0, j-1) : current.substring(0, j+1);
+      j = isDeleting ? j-1 : j+1;
+
+      if (!isDeleting && j === current.length) {
+        setTimeout(() => isDeleting = true, 1000);
+      } else if (isDeleting && j === 0) {
+        isDeleting = false;
+        i = (i + 1) % types.length;
+      }
+      setTimeout(typeWriter, isDeleting ? 50 : 100);
+    }
+    typeWriter();
+
+    // Modal functions
+    function openModal(id) {
+      document.getElementById(id+'Modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      // Reset certificate view when opening modal
+      if (id === 'certificates') {
+        backToSelection();
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id+'Modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Toggle project details
+    function toggleProjectDetails(id) {
+      const details = document.getElementById(id);
+      details.style.display = details.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Certificate functions
+    function showCertificate(type) {
+      document.getElementById('certificateSelection').style.display = 'none';
+      document.getElementById(`${type}Certificate`).classList.add('active');
+    }
+
+    function backToSelection() {
+      document.querySelectorAll('.certificate-display').forEach(display => {
+        display.classList.remove('active');
+      });
+      document.getElementById('certificateSelection').style.display = 'flex';
+    }
+
+    // Close modal when clicking outside content
+    window.onclick = function(event) {
+      if (event.target.className === 'modal') {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+  </script>
+</body>
+</html>
